@@ -1,0 +1,25 @@
+FROM node:20-alpine
+
+WORKDIR /app/backend
+
+# Copiar arquivos de dependência
+COPY backend/package*.json ./
+
+# Instalar dependências
+RUN npm install
+
+# Copiar código fonte
+COPY backend/ .
+
+# Gerar cliente Prisma
+RUN npm run prisma:generate
+
+# Expor porta
+EXPOSE 3000
+
+# Variáveis de ambiente padrão
+ENV NODE_ENV=development
+ENV PORT=3000
+
+# Iniciar aplicação
+CMD ["npm", "start"]

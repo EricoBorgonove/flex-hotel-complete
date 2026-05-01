@@ -1,0 +1,21 @@
+FROM node:20-alpine
+
+WORKDIR /app/frontend
+
+# Copiar arquivos de dependência
+COPY frontend/package*.json ./
+
+# Instalar dependências
+RUN npm install
+
+# Copiar código fonte
+COPY frontend/ .
+
+# Expor porta
+EXPOSE 5173
+
+# Variáveis de ambiente
+ENV VITE_API_URL=http://localhost:3000/api
+
+# Iniciar dev server
+CMD ["npm", "run", "dev", "--", "--host"]

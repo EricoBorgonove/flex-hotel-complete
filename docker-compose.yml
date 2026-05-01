@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # Banco de dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: flex-hotel-db
+    environment:
+      POSTGRES_DB: flexhotel
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: flexhotel123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - flex-hotel-network
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: flex-hotel-api
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:flexhotel123@postgres:5432/flexhotel
+      JWT_SECRET: seu_secret_jwt_super_seguro_aqui_mude_em_producao
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app/backend
+      - /app/backend/node_modules
+    networks:
+      - flex-hotel-network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: flex-hotel-web
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+    networks:
+      - flex-hotel-network
+    restart: unless-stopped
+
+  # Nginx reverse proxy (opcional)
+  nginx:
+    image: nginx:alpine
+    container_name: flex-hotel-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - flex-hotel-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  flex-hotel-network:
+    driver: bridge
