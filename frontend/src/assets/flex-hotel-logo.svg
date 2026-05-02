@@ -1,0 +1,46 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Flex Hotel</title>
+  <desc id="desc">Logo Flex Hotel em dourado e branco.</desc>
+  <defs>
+    <linearGradient id="gold" x1="176" y1="96" x2="428" y2="388" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8df8a"/>
+      <stop offset="0.35" stop-color="#c99a3b"/>
+      <stop offset="0.72" stop-color="#f0cf70"/>
+      <stop offset="1" stop-color="#9b6a24"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="96" y1="386" x2="532" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#cdd3db"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#00152b" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <path d="M212 323H224V247L212 259V323Z" fill="url(#gold)"/>
+    <path d="M242 323H259V208L242 222V323Z" fill="url(#gold)"/>
+    <path d="M281 323H308V146L281 170V323Z" fill="url(#gold)"/>
+    <path d="M326 323H356V170H454L472 146H326V323Z" fill="url(#gold)"/>
+    <path d="M356 236H420L396 261H356V236Z" fill="url(#gold)"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <path d="M118 382H179V394H132V413H169V425H132V454H118V382Z" fill="url(#silver)"/>
+    <path d="M226 382H240V442H294V454H226V382Z" fill="url(#silver)"/>
+    <path d="M333 382H398V394H347V413H388V425H347V442H401V454H333V382Z" fill="url(#silver)"/>
+    <path d="M439 382H456L485 413L515 382H532L494 422L526 454H508L485 430L461 454H443L476 421L439 382Z" fill="url(#silver)"/>
+    <path d="M365 412H400V420H365V412Z" fill="url(#gold)"/>
+  </g>
+
+  <g filter="url(#softShadow)" fill="url(#gold)">
+    <path d="M184 475H220V479H184V475Z"/>
+    <path d="M257 461H263V477H291V461H297V500H291V482H263V500H257V461Z"/>
+    <path d="M331 480.5C331 469.5 340 460 352 460C364 460 373 469.5 373 480.5C373 491.5 364 501 352 501C340 501 331 491.5 331 480.5ZM367 480.5C367 472.5 360.5 465.5 352 465.5C343.5 465.5 337 472.5 337 480.5C337 488.5 343.5 495.5 352 495.5C360.5 495.5 367 488.5 367 480.5Z"/>
+    <path d="M407 466H391V461H429V466H413V500H407V466Z"/>
+    <path d="M462 461H494V466H468V477H490V482H468V495H496V500H462V461Z"/>
+    <path d="M532 461H538V495H563V500H532V461Z"/>
+    <path d="M582 475H618V479H582V475Z"/>
+  </g>
+</svg>
