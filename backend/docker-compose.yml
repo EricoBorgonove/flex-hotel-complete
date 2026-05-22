@@ -1,27 +1,32 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
     environment:
       POSTGRES_DB: flexhotel
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: flexhotel
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d flexhotel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   api:
     build: .
     ports:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://postgres:flexhotel@postgres:5432/flexhotel
-      JWT_SECRET: seu_secret_jwt_aqui
+      JWT_SECRET: 712357612548713
       NODE_ENV: development
     depends_on:
-      - postgres
-    volumes:
-      - .:/app
+      postgres:
+        condition: service_healthy
+    command: sh -c "npm run db:prepare && npm run start"
 
 volumes:
   postgres_data:

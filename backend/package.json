@@ -3,21 +3,30 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/server.js",
+  "type": "commonjs",
   "scripts": {
     "predev": "npm run prisma:generate",
     "dev": "nodemon src/server.js",
+
     "prestart": "npm run prisma:generate",
     "start": "node src/server.js",
+
     "prisma:generate": "prisma generate",
+
     "prisma:migrate": "prisma migrate dev",
-    "preseed": "npm run prisma:generate",
+
     "seed": "node prisma/seed.js",
+
+    "db:prepare": "npx prisma generate && npx prisma migrate deploy && npx prisma db seed",
+
     "test": "echo \"No tests configured\""
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",

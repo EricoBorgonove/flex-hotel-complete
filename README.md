@@ -88,8 +88,18 @@ Frontend estará em: `http://localhost:5173`
 Use as credenciais padrão do seed:
 
 ```
-Email: admin@flexhotel.com
-Senha: admin123
+Email: admin@demo.com
+Senha: 123456
+```
+
+Outros usuarios demo disponiveis:
+
+```
+super@demo.com / 123456
+recepcao@demo.com / 123456
+financeiro@demo.com / 123456
+governanca@demo.com / 123456
+gerente@demo.com / 123456
 ```
 
 ---
@@ -99,19 +109,20 @@ Senha: admin123
 Na raiz do projeto:
 
 ```bash
-docker-compose up
+docker compose up -d --build
 ```
 
 Acesse:
 - **Frontend**: http://localhost:5173
 - **Backend**: http://localhost:3000
-- **PostgreSQL**: localhost:5432
-- **Nginx**: http://localhost:80
+- **Backend health check**: http://localhost:3000/health
+- **PostgreSQL no host**: localhost:5433
+- **Nginx/App**: http://localhost:8080
 
 Para parar:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ---
@@ -202,6 +213,8 @@ flex-hotel/
 |-----------|-----------|
 | [GUIA_COMPLETO_USO.md](./GUIA_COMPLETO_USO.md) | **👉 Comece aqui! Guia passo a passo para usar a aplicação** |
 | [DOCKER_SETUP.md](./DOCKER_SETUP.md) | Guia completo para usar Docker |
+| [DOCKER_CORRECTION.md](./DOCKER_CORRECTION.md) | Correcao das portas e inicializacao Docker em relacao ao original |
+| [SEED_CORRECTION.md](./SEED_CORRECTION.md) | Como funciona a correcao das seeds e o `db:prepare` |
 | [backend/README.md](./backend/README.md) | Documentação do backend |
 | [frontend/README.md](./frontend/README.md) | Documentação do frontend |
 | [backend/API_ENDPOINTS.md](./backend/API_ENDPOINTS.md) | Todos os endpoints da API |
@@ -257,9 +270,12 @@ Authorization: Bearer {token}
 
 ### Roles Disponíveis
 
-- **admin** - Acesso total
-- **hotel_manager** - Gerencia um hotel específico
-- **guest** - Usuário hóspede
+- **SUPER_ADMIN** - Acesso global
+- **ADMIN** - Administracao do hotel
+- **RECEPTION** - Operacao de recepcao
+- **FINANCE** - Operacao financeira
+- **HOUSEKEEPING** - Governanca
+- **MANAGER** - Gerencia operacional
 
 ---
 
@@ -268,7 +284,7 @@ Authorization: Bearer {token}
 ### Backend (.env)
 
 ```
-DATABASE_URL=postgresql://postgres:senha@localhost:5432/flexhotel
+DATABASE_URL=postgresql://postgres:flexhotel123@localhost:5433/flexhotel
 JWT_SECRET=uma_senha_super_segura_com_muitos_caracteres
 PORT=3000
 NODE_ENV=development
@@ -292,6 +308,7 @@ npm start                # Modo produção
 npm run prisma:generate  # Gera cliente Prisma
 npm run prisma:migrate   # Executa migrações
 npm run seed             # Popula banco com dados de teste
+npm run db:prepare       # Gera Prisma, aplica migrations e roda seed
 npm test                 # Executa testes (não configurado)
 ```
 
@@ -322,8 +339,8 @@ npm run lint             # Lint (se configurado)
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@flexhotel.com",
-    "password": "admin123"
+    "email": "admin@demo.com",
+    "password": "123456"
   }'
 
 # Listar hotéis (com token)

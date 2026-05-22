@@ -35,32 +35,34 @@ cd flex-hotel
 2. Configure variáveis de ambiente
 ```bash
 # Backend
+# Opcional no Docker: as variaveis principais ja estao no docker-compose.yml.
+# Necessario se for rodar o backend fora do Docker.
 cp backend/.env.example backend/.env
-
-# Frontend (opcional)
-cp frontend/.env.example frontend/.env
 ```
 
 3. Inicie os containers
 ```bash
-docker-compose up
+docker compose up -d --build
 ```
 
 A aplicação estará disponível em:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:3000
-- Nginx: http://localhost:80
+- Backend health check: http://localhost:3000/health
+- Nginx/App: http://localhost:8080
+- PostgreSQL no host: localhost:5433
 
 ### Parar os containers
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Detalhes dos Services
 
 ### PostgreSQL (postgres)
 - **Container**: flex-hotel-db
-- **Porta**: 5432
+- **Porta no host**: 5433
+- **Porta dentro da rede Docker**: 5432
 - **Database**: flexhotel
 - **User**: postgres
 - **Password**: flexhotel123
@@ -84,7 +86,8 @@ docker-compose down
 
 ### Nginx (nginx)
 - **Container**: flex-hotel-nginx
-- **Porta**: 80, 443
+- **Porta no host**: 8080, 8443
+- **Porta dentro do container**: 80, 443
 - **Função**: Reverse proxy para frontend e API
 - **Config**: nginx.conf
 
@@ -92,41 +95,48 @@ docker-compose down
 
 ### Iniciar em background
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Ver logs
 ```bash
-docker-compose logs -f
-docker-compose logs backend
-docker-compose logs frontend
+docker compose logs -f
+docker compose logs backend
+docker compose logs frontend
 ```
 
 ### Executar migrations
 ```bash
-docker-compose exec backend npm run prisma:migrate
+docker compose exec backend npm run prisma:migrate
 ```
 
 ### Seed do banco
 ```bash
-docker-compose exec backend npm run seed
+docker compose exec backend npm run seed
+```
+
+### Preparar banco completo
+Gera o Prisma Client, aplica migrations pendentes e executa o seed.
+
+```bash
+docker compose exec backend npm run db:prepare
 ```
 
 ### Acessar container
 ```bash
-docker-compose exec backend sh
-docker-compose exec frontend sh
-docker-compose exec postgres psql -U postgres -d flexhotel
+docker compose exec backend sh
+docker compose exec frontend sh
+docker compose exec postgres psql -U postgres -d flexhotel
 ```
 
 ### Reconstruir containers
 ```bash
-docker-compose up --build
+docker compose up -d --build
 ```
 
 ### Limpar tudo
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ## Desenvolvimento
@@ -153,12 +163,12 @@ SELECT * FROM "User";
 1. Usar o arquivo `Dockerfile` combinado:
 ```bash
 docker build -t flex-hotel:latest .
-docker run -p 80:80 -p 3000:3000 flex-hotel:latest
+docker run -p 8080:80 -p 3000:3000 flex-hotel:latest
 ```
 
 2. Ou usar docker-compose com imagens otimizadas:
 ```bash
-docker-compose -f docker-compose.prod.yml up
+docker compose -f docker-compose.prod.yml up
 ```
 
 ### Variáveis de ambiente para produção
@@ -172,26 +182,27 @@ VITE_API_URL=https://api.seu-dominio.com
 ## Troubleshooting
 
 ### Erro: "Cannot connect to database"
-- Verificar se PostgreSQL está rodando: `docker-compose ps`
+- Verificar se PostgreSQL está rodando: `docker compose ps`
 - Verificar variável DATABASE_URL
-- Aguarde container de DB inicializar: `docker-compose logs postgres`
+- Aguarde container de DB inicializar: `docker compose logs postgres`
 
 ### Erro: "Port already in use"
 - Porta 3000: `lsof -i :3000` (macOS/Linux)
 - Porta 5173: `lsof -i :5173`
-- Porta 5432: `lsof -i :5432`
+- Porta 5432: ja pode estar ocupada por um Postgres local. O compose deste projeto publica o banco em `5433:5432`.
+- Porta 8080: usada pelo nginx deste projeto
 - Mudar portas em docker-compose.yml
 
 ### Frontend não conecta ao backend
 - Verificar VITE_API_URL
-- Verificar se backend está rodando: `docker-compose logs backend`
+- Verificar se backend está rodando: `docker compose logs backend`
 - Verificar CORS em backend
 
 ### Limpar cache e reconstruir
 ```bash
-docker-compose down -v
+docker compose down -v
 docker system prune -a
-docker-compose up --build
+docker compose up -d --build
 ```
 
 ## Performance
